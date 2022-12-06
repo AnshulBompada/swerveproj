@@ -1,6 +1,9 @@
 package frc.robot.subsystems.sim;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import java.lang.Math;
+
+import com.ctre.phoenix.sensors.Pigeon2;
+
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveMod;
@@ -19,6 +22,7 @@ public class Swervesubsystem extends SubsystemBase {
   private SwerveMod TopLeft;
   private SwerveMod BottomRight;
   private SwerveMod BottomLeft;
+  private Pigeon2 gyrosensor;
 
   public Swervesubsystem() {
       RightFront = new PWMSparkMax(1);
@@ -58,6 +62,26 @@ public class Swervesubsystem extends SubsystemBase {
       BottomLeft.control(u_magnitude, rotation);
     }
     //Work out code for rotating while translation
+    else {
+      Vector2d sped_vector = new Vector2d(x_speed, y_speed);
+      Rotation2d rot_vector = new Rotation2d(x_speed, y_speed);
+      double magnitude = sped_vector.magnitude();
+      double sign = Math.signum(y_speed);
+      double u_magnitude = sign * magnitude;
+      double rotation = rot_vector.getDegrees();
+      if(gyrosensor.getYaw() < 0 && orientation > 0) {
+        TopLeft.control(orientation, 45);
+        BottomRight.control(orientation, 45);
+        BottomLeft.control(u_magnitude, rotation);
+        TopRight.control(u_magnitude, rotation);
+      }
+      if(gyrosensor.getYaw() < 0 && orientation < 0) {
+        TopRight.control(orientation, 45);
+        BottomLeft.control(orientation, 45);
+        BottomRight.control(u_magnitude, rotation);
+        TopLeft.control(u_magnitude, rotation);
+      }
+    }
   }
 
   @Override

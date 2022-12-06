@@ -82,10 +82,16 @@ public class Swervesubsystem extends SubsystemBase {
       double u_magnitude = sign * magnitude;
       double rotation = rot_vector.getDegrees();
       if(gyrosensor.getYaw() < 0 && orientation > 0) {
-        TopLeft.control(1, 45);
-        BottomRight.control(1, 45);
+        TopLeft.control(orientation, 45);
+        BottomRight.control(orientation, 45);
         BottomLeft.control(u_magnitude, rotation);
         TopRight.control(u_magnitude, rotation);
+      }
+      if(gyrosensor.getYaw() < 0 && orientation < 0) {
+        TopRight.control(orientation, 45);
+        BottomLeft.control(orientation, 45);
+        BottomRight.control(u_magnitude, rotation);
+        TopLeft.control(u_magnitude, rotation);
       }
     }
   }
