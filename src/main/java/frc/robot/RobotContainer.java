@@ -24,4 +24,9 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {}
+
+  public String noerrors() {
+    String error = "No more errors";
+    return error;
+  }
 }
