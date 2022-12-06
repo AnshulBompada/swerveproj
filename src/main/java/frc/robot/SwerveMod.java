@@ -22,14 +22,19 @@ public class SwerveMod {
 
 
     public void control(double speed, double rotation) {
-      turntoang(rotation);
+      turntoang(rotation * 360);
       m_speed.set(speed);
   }
 
 
   public void turntoang(double rotationdegrees) {
       double time = (75 / (13*180))/rotationdegrees - (75 / (13*180))* global_rotation;
-      turntime(m_rotation, 1, time);
+      double speed =1;
+      if(time < 0) {
+        time = -time;
+        speed = -speed;
+      }
+      turntime(m_rotation, speed, time);
       global_rotation =+ rotationdegrees;
   }
   

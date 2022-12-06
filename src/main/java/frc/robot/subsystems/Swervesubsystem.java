@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.sensors.Pigeon2;
+
 import java.lang.Math;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,6 +22,7 @@ public class Swervesubsystem extends SubsystemBase {
   private SwerveMod TopLeft;
   private SwerveMod BottomRight;
   private SwerveMod BottomLeft;
+  private Pigeon2 gyrosensor;
 
   public Swervesubsystem() {
       RightFront = new WPI_TalonSRX(1);
@@ -47,18 +50,14 @@ public class Swervesubsystem extends SubsystemBase {
   }
 
   public void swerve_mode(double x_speed, double y_speed, double orientation) {
-    while(x_speed == 0 & y_speed == 0) {
-      RightFront.set(-orientation);
-      LeftFront.set(orientation);
-      RightBack.set(-orientation);
-      LeftBack.set(orientation);
-
-
-
+    if(-0.2 <= x_speed && x_speed <= 0.2 && y_speed <= 0.2 && -0.2 <= y_speed) {
+      TopRight.control(-orientation, 45);
+      TopLeft.control(orientation, 45);
+      BottomRight.control(-orientation, 45);
+      BottomLeft.control(orientation, 45);
       //Create code for setting the motrs to an anlge
     }
-
-    while(orientation == 0) {
+    else if(orientation == 0) {
       Vector2d sped_vector = new Vector2d(x_speed, y_speed);
       Rotation2d rot_vector = new Rotation2d(x_speed, y_speed);
       double magnitude = sped_vector.magnitude();
@@ -75,6 +74,20 @@ public class Swervesubsystem extends SubsystemBase {
       //Create code for setting the motors to an angle
     }
     //Work out code for rotating while translation
+    else {
+      Vector2d sped_vector = new Vector2d(x_speed, y_speed);
+      Rotation2d rot_vector = new Rotation2d(x_speed, y_speed);
+      double magnitude = sped_vector.magnitude();
+      double sign = Math.signum(y_speed);
+      double u_magnitude = sign * magnitude;
+      double rotation = rot_vector.getDegrees();
+      if(gyrosensor.getYaw() < 0 && orientation > 0) {
+        TopLeft.control(1, 45);
+        BottomRight.control(1, 45);
+        BottomLeft.control(u_magnitude, rotation);
+        TopRight.control(u_magnitude, rotation);
+      }
+    }
   }
 
   @Override
