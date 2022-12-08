@@ -22,7 +22,7 @@ public class Swervesubsystem extends SubsystemBase {
   private SwerveMod TopLeft;
   private SwerveMod BottomRight;
   private SwerveMod BottomLeft;
-  private Pigeon2 gyrosensor;
+//  private Pigeon2 gyrosensor;
 
   public Swervesubsystem() {
       RightFront = new PWMSparkMax(1);
@@ -42,10 +42,10 @@ public class Swervesubsystem extends SubsystemBase {
 
   public void swerve_mode(double x_speed, double y_speed, double orientation) {
     if(x_speed == 0 & y_speed == 0) {
-      TopRight.control(orientation, 45);
-      BottomRight.control(-orientation, 45);
-      TopLeft.control(-orientation, 45);
-      BottomLeft.control(orientation, 45);
+      TopRight.simcontrol(orientation, 45);
+      BottomRight.simcontrol(-orientation, 45);
+      TopLeft.simcontrol(-orientation, 45);
+      BottomLeft.simcontrol(orientation, 45);
     }
 
     if(orientation == 0) {
@@ -56,10 +56,10 @@ public class Swervesubsystem extends SubsystemBase {
       double u_magnitude = sign * magnitude;
       double rotation = rot_vector.getDegrees();
 
-      TopRight.control(u_magnitude, rotation);
-      BottomRight.control(u_magnitude, rotation);
-      TopLeft.control(u_magnitude, rotation);
-      BottomLeft.control(u_magnitude, rotation);
+      TopRight.simcontrol(u_magnitude, rotation);
+      BottomRight.simcontrol(u_magnitude, rotation);
+      TopLeft.simcontrol(u_magnitude, rotation);
+      BottomLeft.simcontrol(u_magnitude, rotation);
     }
     //Work out code for rotating while translation
     else {
@@ -69,17 +69,17 @@ public class Swervesubsystem extends SubsystemBase {
       double sign = Math.signum(y_speed);
       double u_magnitude = sign * magnitude;
       double rotation = rot_vector.getDegrees();
-      if(gyrosensor.getYaw() < 0 && orientation > 0) {
-        TopLeft.control(orientation, 45);
-        BottomRight.control(orientation, 45);
-        BottomLeft.control(u_magnitude, rotation);
-        TopRight.control(u_magnitude, rotation);
+      if(orientation > 0) {
+        TopLeft.simcontrol(orientation, 45);
+        BottomRight.simcontrol(orientation, 45);
+        BottomLeft.simcontrol(u_magnitude, rotation);
+        TopRight.simcontrol(u_magnitude, rotation);
       }
-      if(gyrosensor.getYaw() < 0 && orientation < 0) {
-        TopRight.control(orientation, 45);
-        BottomLeft.control(orientation, 45);
-        BottomRight.control(u_magnitude, rotation);
-        TopLeft.control(u_magnitude, rotation);
+      if(orientation < 0) {
+        TopRight.simcontrol(orientation, 45);
+        BottomLeft.simcontrol(orientation, 45);
+        BottomRight.simcontrol(u_magnitude, rotation);
+        TopLeft.simcontrol(u_magnitude, rotation);
       }
     }
   }

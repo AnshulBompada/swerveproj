@@ -22,21 +22,47 @@ public class SwerveMod {
 
 
     public void control(double speed, double rotation) {
-      turntoang(rotation * 360);
+      turntoang(m_rotation, rotation * 180);
       m_speed.set(speed);
-  }
+    }
 
+    public void simcontrol(double speed, double rotation) {
+      turntoang(sim_rotation, rotation * 180);
+      sim_speed.set(speed);
+    }
 
-  public void turntoang(double rotationdegrees) {
+  public void turntoang(WPI_TalonSRX motor, double rotationdegrees) {
       double time = (75 / (13*180))/rotationdegrees - (75 / (13*180))* global_rotation;
       double speed =1;
       if(time < 0) {
         time = -time;
         speed = -speed;
       }
-      turntime(m_rotation, speed, time);
+      turntime(motor, speed, time);
       global_rotation =+ rotationdegrees;
   }
+
+  public void turntoang(PWMSparkMax motor, double rotationdegrees) {
+    double time = (75 / (13*180))/rotationdegrees - (75 / (13*180))* global_rotation;
+    double speed =1;
+    if(time < 0) {
+      time = -time;
+      speed = -speed;
+    }
+    turntime(motor, speed, time);
+    global_rotation =+ rotationdegrees;
+  }
+
+  public void turntoang(double rotationdegrees) {
+    double time = (75 / (13*180))/rotationdegrees - (75 / (13*180))* global_rotation;
+    double speed =1;
+    if(time < 0) {
+      time = -time;
+      speed = -speed;
+    }
+    turntime(m_rotation, speed, time);
+    global_rotation =+ rotationdegrees;
+}
   
     public void turntime(WPI_TalonSRX motor, double speed, double time){
       Timer timer = new Timer();
