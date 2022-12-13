@@ -32,14 +32,14 @@ public class SwerveMod {
     }
 
   public void turntoang(WPI_TalonSRX motor, double rotationdegrees) {
-      double time = (75 / (13*180))/rotationdegrees - (75 / (13*180))* global_rotation;
-      double speed =1;
-      if(time < 0) {
+//      double time = (75 / (13*180))/rotationdegrees - (75 / (13*180))* global_rotation;
+//      double speed =1;
+/*      if(time < 0) {
         time = -time;
         speed = -speed;
       }
       turntime(motor, speed, time);
-      global_rotation =+ rotationdegrees;
+      global_rotation =+ rotationdegrees;*/
   }
 
   public void turntoang(PWMSparkMax motor, double rotationdegrees) {
@@ -54,14 +54,9 @@ public class SwerveMod {
   }
 
   public void turntoang(double rotationdegrees) {
-    double time = (75 / (13*180))/rotationdegrees - (75 / (13*180))* global_rotation;
-    double speed =1;
-    if(time < 0) {
-      time = -time;
-      speed = -speed;
+    while(1 < rotationdegrees) {
+
     }
-    turntime(m_rotation, speed, time);
-    global_rotation =+ rotationdegrees;
 }
   
     public void turntime(WPI_TalonSRX motor, double speed, double time){

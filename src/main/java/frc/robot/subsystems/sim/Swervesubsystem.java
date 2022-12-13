@@ -1,9 +1,7 @@
 package frc.robot.subsystems.sim;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import java.lang.Math;
-
-import com.ctre.phoenix.sensors.Pigeon2;
-
+//import com.ctre.phoenix.sensors.Pigeon2;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveMod;

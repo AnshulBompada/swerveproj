@@ -1,10 +1,8 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.sensors.Pigeon2;
-
+//import com.ctre.phoenix.sensors.Pigeon2;
 import java.lang.Math;
-import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveMod;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,7 +20,7 @@ public class Swervesubsystem extends SubsystemBase {
   private SwerveMod TopLeft;
   private SwerveMod BottomRight;
   private SwerveMod BottomLeft;
-  private Pigeon2 gyrosensor;
+//  private Pigeon2 gyrosensor;
 
   public Swervesubsystem() {
       RightFront = new WPI_TalonSRX(1);
@@ -55,44 +53,30 @@ public class Swervesubsystem extends SubsystemBase {
       TopLeft.control(orientation, 45);
       BottomRight.control(-orientation, 45);
       BottomLeft.control(orientation, 45);
-      //Create code for setting the motrs to an anlge
     }
-    else if(orientation == 0) {
-      Vector2d sped_vector = new Vector2d(x_speed, y_speed);
-      Rotation2d rot_vector = new Rotation2d(x_speed, y_speed);
-      double magnitude = sped_vector.magnitude();
-      double sign = Math.signum(y_speed);
-      double u_magnitude = sign * magnitude;
-      double rotation = rot_vector.getDegrees();
-
-      TopRight.control(u_magnitude, rotation);
-      BottomRight.control(u_magnitude, rotation);
-      TopLeft.control(u_magnitude, rotation);
-      BottomLeft.control(u_magnitude, rotation);
-
-
-      //Create code for setting the motors to an angle
-    }
-    //Work out code for rotating while translation
     else {
-      Vector2d sped_vector = new Vector2d(x_speed, y_speed);
-      Rotation2d rot_vector = new Rotation2d(x_speed, y_speed);
-      double magnitude = sped_vector.magnitude();
-      double sign = Math.signum(y_speed);
-      double u_magnitude = sign * magnitude;
-      double rotation = rot_vector.getDegrees();
-      if(gyrosensor.getYaw() < 0 && orientation > 0) {
-        TopLeft.control(orientation, 45);
-        BottomRight.control(orientation, 45);
-        BottomLeft.control(u_magnitude, rotation);
-        TopRight.control(u_magnitude, rotation);
-      }
-      if(gyrosensor.getYaw() < 0 && orientation < 0) {
-        TopRight.control(orientation, 45);
-        BottomLeft.control(orientation, 45);
-        BottomRight.control(u_magnitude, rotation);
-        TopLeft.control(u_magnitude, rotation);
-      }
+      double u_magnitude = Math.sqrt(Math.pow(x_speed, 2) + Math.pow(y_speed, 2));
+      Rotation2d RU = new Rotation2d(u_magnitude, 0);
+      Rotation2d RD = new Rotation2d(u_magnitude, 0);
+      Rotation2d LU = new Rotation2d(u_magnitude, 0);
+      Rotation2d LD = new Rotation2d(u_magnitude, 0);
+      RU.rotateBy(new Rotation2d(-orientation*(Math.PI/4)));
+      RD.rotateBy(new Rotation2d(-orientation*(Math.PI/4)));
+      LU.rotateBy(new Rotation2d(orientation*(Math.PI/4)));
+      LD.rotateBy(new Rotation2d(orientation*(Math.PI/4)));
+
+//      RD.times(u_magnitude - 0.75 * u_magnitude * orientation);
+//      LD.times(u_magnitude - 0.75 * u_magnitude * orientation);
+
+      RU.rotateBy(new Rotation2d(Math.PI * orientation));
+      RD.rotateBy(new Rotation2d(Math.PI * orientation));
+      LU.rotateBy(new Rotation2d(Math.PI * orientation));
+      LD.rotateBy(new Rotation2d(Math.PI * orientation));
+
+      TopRight.control(u_magnitude, RU.getDegrees());
+      TopLeft.control(u_magnitude, LU.getDegrees());
+      BottomRight.control(u_magnitude, RD.getDegrees());
+      BottomLeft.control(u_magnitude, LD.getDegrees());
     }
   }
 
