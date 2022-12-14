@@ -48,7 +48,7 @@ public class Swervesubsystem extends SubsystemBase {
   }
 
   public void swerve_mode(double x_speed, double y_speed, double orientation) {
-    if(-0.2 <= x_speed && x_speed <= 0.2 && y_speed <= 0.2 && -0.2 <= y_speed) {
+    if(x_speed == 0 && y_speed == 0) {
       TopRight.control(-orientation, 45);
       TopLeft.control(orientation, 45);
       BottomRight.control(-orientation, 45);
@@ -57,26 +57,32 @@ public class Swervesubsystem extends SubsystemBase {
     else {
       double u_magnitude = Math.sqrt(Math.pow(x_speed, 2) + Math.pow(y_speed, 2));
       double u_lmagnitude = u_magnitude - 0.75 * u_magnitude * orientation;
+      double joystick_rotation = Math.atan2(x_speed, y_speed);
       Rotation2d RU = new Rotation2d(u_magnitude, 0);
       Rotation2d RD = new Rotation2d(u_magnitude, 0);
       Rotation2d LU = new Rotation2d(u_magnitude, 0);
       Rotation2d LD = new Rotation2d(u_magnitude, 0);
-      
+      Rotation2d rotation = new Rotation2d(Math.PI * joystick_rotation);
+
       RU.rotateBy(new Rotation2d(-orientation*(Math.PI/4)));
       RD.rotateBy(new Rotation2d(-orientation*(Math.PI/4)));
       LU.rotateBy(new Rotation2d(orientation*(Math.PI/4)));
       LD.rotateBy(new Rotation2d(orientation*(Math.PI/4)));
 
-      RU.rotateBy(new Rotation2d(Math.PI * orientation));
-      RD.rotateBy(new Rotation2d(Math.PI * orientation));
-      LU.rotateBy(new Rotation2d(Math.PI * orientation));
-      LD.rotateBy(new Rotation2d(Math.PI * orientation));
+      RU.rotateBy(rotation);
+      RD.rotateBy(rotation);
+      LU.rotateBy(rotation);
+      LD.rotateBy(rotation);
 
       TopRight.control(u_magnitude, RU.getDegrees());
       TopLeft.control(u_magnitude, LU.getDegrees());
       BottomRight.control(u_lmagnitude, RD.getDegrees());
       BottomLeft.control(u_lmagnitude, LD.getDegrees());
     }
+    TopRight.control(0, 0);
+    TopLeft.control(0, 0);
+    BottomRight.control(0, 0);
+    BottomLeft.control(0, 0);
   }
 
   @Override
