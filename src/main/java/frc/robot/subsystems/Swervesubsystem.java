@@ -61,6 +61,7 @@ public class Swervesubsystem extends SubsystemBase {
       Rotation2d RD = new Rotation2d(u_magnitude, 0);
       Rotation2d LU = new Rotation2d(u_magnitude, 0);
       Rotation2d LD = new Rotation2d(u_magnitude, 0);
+      
       RU.rotateBy(new Rotation2d(-orientation*(Math.PI/4)));
       RD.rotateBy(new Rotation2d(-orientation*(Math.PI/4)));
       LU.rotateBy(new Rotation2d(orientation*(Math.PI/4)));
