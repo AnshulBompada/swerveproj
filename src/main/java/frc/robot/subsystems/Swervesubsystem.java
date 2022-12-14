@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 //import com.ctre.phoenix.sensors.Pigeon2;
 import java.lang.Math;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -8,14 +8,14 @@ import frc.robot.SwerveMod;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class Swervesubsystem extends SubsystemBase {
-  private WPI_TalonSRX RightFront;
-  private WPI_TalonSRX LeftFront;
-  private WPI_TalonSRX RightBack;
-  private WPI_TalonSRX LeftBack;
-  private WPI_TalonSRX r_RightFront;
-  private WPI_TalonSRX r_LeftFront;
-  private WPI_TalonSRX r_RightBack;
-  private WPI_TalonSRX r_LeftBack;
+  private WPI_TalonFX RightFront;
+  private WPI_TalonFX LeftFront;
+  private WPI_TalonFX RightBack;
+  private WPI_TalonFX LeftBack;
+  private WPI_TalonFX r_RightFront;
+  private WPI_TalonFX r_LeftFront;
+  private WPI_TalonFX r_RightBack;
+  private WPI_TalonFX r_LeftBack;
   private SwerveMod TopRight;
   private SwerveMod TopLeft;
   private SwerveMod BottomRight;
@@ -23,14 +23,14 @@ public class Swervesubsystem extends SubsystemBase {
 //  private Pigeon2 gyrosensor;
 
   public Swervesubsystem() {
-      RightFront = new WPI_TalonSRX(1);
-      LeftFront = new WPI_TalonSRX(2);
-      RightBack = new WPI_TalonSRX(3);
-      LeftBack = new WPI_TalonSRX(4);
-      r_RightFront = new WPI_TalonSRX(5);
-      r_LeftFront = new WPI_TalonSRX(6);
-      r_RightBack = new WPI_TalonSRX(7);
-      r_LeftBack = new WPI_TalonSRX(8);
+      RightFront = new WPI_TalonFX(1);
+      LeftFront = new WPI_TalonFX(2);
+      RightBack = new WPI_TalonFX(3);
+      LeftBack = new WPI_TalonFX(4);
+      r_RightFront = new WPI_TalonFX(5);
+      r_LeftFront = new WPI_TalonFX(6);
+      r_RightBack = new WPI_TalonFX(7);
+      r_LeftBack = new WPI_TalonFX(8);
 
       RightFront.setNeutralMode(NeutralMode.Brake);
       RightBack.setNeutralMode(NeutralMode.Brake);
@@ -41,10 +41,10 @@ public class Swervesubsystem extends SubsystemBase {
       r_LeftFront.setNeutralMode(NeutralMode.Brake);
       r_LeftBack.setNeutralMode(NeutralMode.Brake);
       
-      TopRight = new SwerveMod(RightFront, r_RightFront);
-      TopLeft = new SwerveMod(LeftFront, r_LeftFront);
-      BottomRight = new SwerveMod(RightBack, r_RightBack);
-      BottomLeft = new SwerveMod(LeftBack, r_LeftBack);      
+      TopRight = new SwerveMod(RightFront, r_RightFront, 1);
+      TopLeft = new SwerveMod(LeftFront, r_LeftFront, 2);
+      BottomRight = new SwerveMod(RightBack, r_RightBack, 3);
+      BottomLeft = new SwerveMod(LeftBack, r_LeftBack, 4);      
   }
 
   public void swerve_mode(double x_speed, double y_speed, double orientation) {
@@ -56,6 +56,7 @@ public class Swervesubsystem extends SubsystemBase {
     }
     else {
       double u_magnitude = Math.sqrt(Math.pow(x_speed, 2) + Math.pow(y_speed, 2));
+      double u_lmagnitude = u_magnitude - 0.75 * u_magnitude * orientation;
       Rotation2d RU = new Rotation2d(u_magnitude, 0);
       Rotation2d RD = new Rotation2d(u_magnitude, 0);
       Rotation2d LU = new Rotation2d(u_magnitude, 0);
@@ -65,9 +66,6 @@ public class Swervesubsystem extends SubsystemBase {
       LU.rotateBy(new Rotation2d(orientation*(Math.PI/4)));
       LD.rotateBy(new Rotation2d(orientation*(Math.PI/4)));
 
-//      RD.times(u_magnitude - 0.75 * u_magnitude * orientation);
-//      LD.times(u_magnitude - 0.75 * u_magnitude * orientation);
-
       RU.rotateBy(new Rotation2d(Math.PI * orientation));
       RD.rotateBy(new Rotation2d(Math.PI * orientation));
       LU.rotateBy(new Rotation2d(Math.PI * orientation));
@@ -75,8 +73,8 @@ public class Swervesubsystem extends SubsystemBase {
 
       TopRight.control(u_magnitude, RU.getDegrees());
       TopLeft.control(u_magnitude, LU.getDegrees());
-      BottomRight.control(u_magnitude, RD.getDegrees());
-      BottomLeft.control(u_magnitude, LD.getDegrees());
+      BottomRight.control(u_lmagnitude, RD.getDegrees());
+      BottomLeft.control(u_lmagnitude, LD.getDegrees());
     }
   }
 
