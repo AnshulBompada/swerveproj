@@ -57,8 +57,10 @@ public class SwerveMod {
   }
 
   public void turntoang(double rotationdegrees) {
-    while(rotationdegrees - 10 < rot_encoder.getAbsolutePosition() % 180) {
-      m_rotation.set(1);
+    while(rotationdegrees < rot_encoder.getAbsolutePosition() % 180) {
+      if(180 - rotationdegrees > 180)
+        m_rotation.set(-1);
+      m_rotation.set(0);
     }
     m_rotation.set(0);
 }

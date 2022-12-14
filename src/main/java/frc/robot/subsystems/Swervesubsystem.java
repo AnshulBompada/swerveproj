@@ -79,6 +79,9 @@ public class Swervesubsystem extends SubsystemBase {
       BottomRight.control(u_lmagnitude, RD.getDegrees());
       BottomLeft.control(u_lmagnitude, LD.getDegrees());
     }
+  }
+
+  public void stop() {
     TopRight.control(0, 0);
     TopLeft.control(0, 0);
     BottomRight.control(0, 0);
