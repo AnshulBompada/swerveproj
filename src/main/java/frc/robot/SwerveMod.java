@@ -1,5 +1,6 @@
 package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
@@ -11,11 +12,14 @@ public class SwerveMod {
     WPI_CANCoder rot_encoder;
     PWMSparkMax sim_speed;
     PWMSparkMax sim_rotation;
+    AbsoluteSensorRange angle_range;
 
     public SwerveMod(WPI_TalonFX speed, WPI_TalonFX rotation, int encoder_port) {
         m_speed = speed;
         m_rotation = rotation;
         rot_encoder = new WPI_CANCoder(encoder_port);
+        angle_range = AbsoluteSensorRange.Signed_PlusMinus180;
+        rot_encoder.configAbsoluteSensorRange(angle_range);
     }
 
     public SwerveMod(PWMSparkMax speed, PWMSparkMax rotation) {
