@@ -73,11 +73,18 @@ public class Swervesubsystem extends SubsystemBase {
       RD.rotateBy(rotation);
       LU.rotateBy(rotation);
       LD.rotateBy(rotation);
-
+    if(orientation > 0){
       TopRight.control(u_magnitude, RU.getDegrees());
       TopLeft.control(u_magnitude, LU.getDegrees());
       BottomRight.control(u_lmagnitude, RD.getDegrees());
       BottomLeft.control(u_lmagnitude, LD.getDegrees());
+      }
+    if(orientation < 0){
+        TopRight.control(u_lmagnitude, RU.getDegrees());
+        TopLeft.control(u_lmagnitude, LU.getDegrees());
+        BottomRight.control(u_magnitude, RD.getDegrees());
+        BottomLeft.control(u_magnitude, LD.getDegrees());
+      }
     }
   }
 
