@@ -2,6 +2,8 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
+import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.SensorTimeBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 
@@ -13,13 +15,18 @@ public class SwerveMod {
     PWMSparkMax sim_speed;
     PWMSparkMax sim_rotation;
     AbsoluteSensorRange angle_range;
+    CANCoderConfiguration config;
 
     public SwerveMod(WPI_TalonFX speed, WPI_TalonFX rotation, int encoder_port) {
         m_speed = speed;
         m_rotation = rotation;
-        rot_encoder = new WPI_CANCoder(encoder_port);
-        angle_range = AbsoluteSensorRange.Signed_PlusMinus180;
-        rot_encoder.configAbsoluteSensorRange(angle_range);
+        rot_encoder = new WPI_CANCoder(m_rotation.getDeviceID());
+        CANCoderConfiguration config = new CANCoderConfiguration();
+        config.sensorCoefficient = 360 / 4096.0;
+        config.unitString = "deg";
+        config.sensorTimeBase = SensorTimeBase.PerSecond;
+        config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
+        rot_encoder.configAllSettings(config);
     }
 
     public SwerveMod(PWMSparkMax speed, PWMSparkMax rotation) {
@@ -85,7 +92,11 @@ public class SwerveMod {
     timer.start();
     while(timer.get() < time) {
       motor.set(speed);
-}
+  }
     motor.set(0);
-}
+  }
+
+  public void setposition() {
+    rot_encoder.setPosition(45);
+  }
 }
