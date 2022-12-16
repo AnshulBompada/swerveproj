@@ -32,10 +32,10 @@ public class Swervesubsystem extends SubsystemBase {
       r_RightBack = new PWMSparkMax(7);
       r_LeftBack = new PWMSparkMax(8);
       
-      TopRight = new SwerveMod(RightFront, r_RightFront);
-      TopLeft = new SwerveMod(LeftFront, r_LeftFront);
-      BottomRight = new SwerveMod(RightBack, r_RightBack);
-      BottomLeft = new SwerveMod(LeftBack, r_LeftBack);      
+      TopRight = new SwerveMod(RightFront, r_RightFront, 1);
+      TopLeft = new SwerveMod(LeftFront, r_LeftFront, 1);
+      BottomRight = new SwerveMod(RightBack, r_RightBack, 1);
+      BottomLeft = new SwerveMod(LeftBack, r_LeftBack, 1);      
   }
 
   public void swerve_mode(double x_speed, double y_speed, double orientation) {
