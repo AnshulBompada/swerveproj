@@ -48,7 +48,7 @@ public class Swervesubsystem extends SubsystemBase {
   }
 
   public void swerve_mode(double x_speed, double y_speed, double orientation) {
-    if(x_speed == 0 && y_speed == 0) {
+    if(x_speed == 0 && y_speed == 0 && orientation == 0) {
       TopRight.control(-orientation, 45);
       TopLeft.control(orientation, 45);
       BottomRight.control(-orientation, 45);
