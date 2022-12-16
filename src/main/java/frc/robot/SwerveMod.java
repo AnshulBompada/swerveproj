@@ -96,7 +96,7 @@ public class SwerveMod {
     motor.set(0);
   }
 
-  public void setposition() {
-    rot_encoder.setPosition(45);
+  public void setposition(double pos) {
+    rot_encoder.setPosition(pos);
   }
 }
