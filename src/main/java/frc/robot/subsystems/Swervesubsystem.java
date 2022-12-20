@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-//import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix.sensors.Pigeon2;
 import java.lang.Math;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveMod;
@@ -20,7 +20,7 @@ public class Swervesubsystem extends SubsystemBase {
   private SwerveMod TopLeft;
   private SwerveMod BottomRight;
   private SwerveMod BottomLeft;
-//  private Pigeon2 gyrosensor;
+  private Pigeon2 gyro;
 
   public Swervesubsystem() {
       RightFront = new WPI_TalonFX(1);
@@ -40,6 +40,8 @@ public class Swervesubsystem extends SubsystemBase {
       r_RightBack.setNeutralMode(NeutralMode.Brake);
       r_LeftFront.setNeutralMode(NeutralMode.Brake);
       r_LeftBack.setNeutralMode(NeutralMode.Brake);
+
+      gyro.setYaw(0);
       
       TopRight = new SwerveMod(RightFront, r_RightFront, 1);
       TopLeft = new SwerveMod(LeftFront, r_LeftFront, 2);
@@ -63,6 +65,7 @@ public class Swervesubsystem extends SubsystemBase {
       Rotation2d LU = new Rotation2d(u_magnitude, 0);
       Rotation2d LD = new Rotation2d(u_magnitude, 0);
       Rotation2d rotation = new Rotation2d(Math.PI * joystick_rotation);
+      Rotation2d robotori = new Rotation2d(-gyro.getYaw());
 
       RU.rotateBy(new Rotation2d(-orientation*(Math.PI/4)));
       RD.rotateBy(new Rotation2d(-orientation*(Math.PI/4)));
@@ -73,6 +76,12 @@ public class Swervesubsystem extends SubsystemBase {
       RD.rotateBy(rotation);
       LU.rotateBy(rotation);
       LD.rotateBy(rotation);
+/*
+      RU.rotateBy(robotori);
+      RD.rotateBy(robotori);
+      LU.rotateBy(robotori);
+      LD.rotateBy(robotori);
+*/
     if(orientation > 0){
       TopRight.control(u_magnitude, RU.getDegrees());
       TopLeft.control(u_magnitude, LU.getDegrees());
