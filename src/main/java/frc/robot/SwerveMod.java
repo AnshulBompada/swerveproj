@@ -1,5 +1,7 @@
 package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
@@ -27,6 +29,19 @@ public class SwerveMod {
         config.sensorTimeBase = SensorTimeBase.PerSecond;
         config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
         rot_encoder.configAllSettings(config);
+        
+        m_speed.configFactoryDefault();
+        m_speed.setInverted(TalonFXInvertType.CounterClockwise);
+        m_speed.config_kP(0, 0.044057);
+        m_speed.config_kF(0, 0.028998);
+
+        m_rotation.configFactoryDefault();
+        m_rotation.setInverted(TalonFXInvertType.CounterClockwise);
+        m_rotation.configRemoteFeedbackFilter(rot_encoder, 0);
+        m_rotation.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
+        m_rotation.setSelectedSensorPosition(rot_encoder.getAbsolutePosition());
+        m_rotation.config_kP(0, 0.4);
+        m_rotation.config_kD(0, 12);
     }
 
     public SwerveMod(PWMSparkMax speed, PWMSparkMax rotation, int encoder_port) {
@@ -41,13 +56,7 @@ public class SwerveMod {
 
     public void accturntoang(double rotationdegrees) {
       double rotationticks = convert(rotationdegrees);
-      if(Math.abs(rotationdegrees - rot_encoder.getAbsolutePosition()) > 180){
-        m_rotation.set(ControlMode.Position, rotationticks);
-      }
-      if(Math.abs(rotationdegrees - rot_encoder.getAbsolutePosition()) < 180) {
-        m_rotation.set(ControlMode.Position, rotationticks);
-      }
-      m_rotation.set(0);
+      m_rotation.set(ControlMode.Position, rotationticks);
     }
 
     public void turntoang(double rotationdegrees) {
@@ -63,21 +72,21 @@ public class SwerveMod {
         }
         m_rotation.set(0);
       }
-      }
+    }
 
-      public void dumbturntoang(double rotationdegrees) {
-        double range = 0.2;
-        double error;
-        while(rotationdegrees - range < rot_encoder.getAbsolutePosition() || rotationdegrees + range > rot_encoder.getAbsolutePosition()) {
-          error = rot_encoder.getAbsolutePosition() - rotationdegrees;
-          if(Math.abs(error) > 180) {
-            m_rotation.set(-dumbcalc(error));
-          }
-          if(Math.abs(error) < 180) {
-            m_rotation.set(dumbcalc(error));
+    public void dumbturntoang(double rotationdegrees) {
+      double range = 0.2;
+      double error;
+      while(rotationdegrees - range < rot_encoder.getAbsolutePosition() || rotationdegrees + range > rot_encoder.getAbsolutePosition()) {
+        error = rot_encoder.getAbsolutePosition() - rotationdegrees;
+        if(Math.abs(error) > 180) {
+          m_rotation.set(-dumbcalc(error));
+        }
+        if(Math.abs(error) < 180) {
+          m_rotation.set(dumbcalc(error));
         }
       }
-      }
+    }
 
     public double dumbcalc(double degrees) {
       if(Math.abs(degrees) > 180) {
@@ -87,9 +96,10 @@ public class SwerveMod {
     }
 
     public double convert(double degrees) {
-      double ticks = degrees * 4096/360;
+      double ticks = degrees * 4096/180;
       return ticks;
     }
+    
 /*  
     public void turntime(WPI_TalonFX motor, double speed, double time){
       Timer timer = new Timer();

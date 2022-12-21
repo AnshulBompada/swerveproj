@@ -23,14 +23,14 @@ public class Swervesubsystem extends SubsystemBase {
   private Pigeon2 gyro;
 
   public Swervesubsystem() {
-      RightFront = new WPI_TalonFX(1);
-      LeftFront = new WPI_TalonFX(2);
-      RightBack = new WPI_TalonFX(3);
-      LeftBack = new WPI_TalonFX(4);
-      r_RightFront = new WPI_TalonFX(5);
-      r_LeftFront = new WPI_TalonFX(6);
-      r_RightBack = new WPI_TalonFX(7);
-      r_LeftBack = new WPI_TalonFX(8);
+      RightFront = new WPI_TalonFX(12);
+      LeftFront = new WPI_TalonFX(11);
+      RightBack = new WPI_TalonFX(14);
+      LeftBack = new WPI_TalonFX(13);
+      r_RightFront = new WPI_TalonFX(22);
+      r_LeftFront = new WPI_TalonFX(21);
+      r_RightBack = new WPI_TalonFX(24);
+      r_LeftBack = new WPI_TalonFX(23);
 
       RightFront.setNeutralMode(NeutralMode.Brake);
       RightBack.setNeutralMode(NeutralMode.Brake);
@@ -41,7 +41,7 @@ public class Swervesubsystem extends SubsystemBase {
       r_LeftFront.setNeutralMode(NeutralMode.Brake);
       r_LeftBack.setNeutralMode(NeutralMode.Brake);
 
-      gyro.setYaw(0);
+      //gyro.setYaw(0);
       
       TopRight = new SwerveMod(RightFront, r_RightFront, 1);
       TopLeft = new SwerveMod(LeftFront, r_LeftFront, 2);
@@ -98,10 +98,10 @@ public class Swervesubsystem extends SubsystemBase {
   }
 
   public void stop() {
-    TopRight.control(0, 0);
-    TopLeft.control(0, 0);
-    BottomRight.control(0, 0);
-    BottomLeft.control(0, 0);
+    TopRight.control(-45, 0);
+    TopLeft.control(45, 0);
+    BottomRight.control(45, 0);
+    BottomLeft.control(-45, 0);
   }
 
   @Override
