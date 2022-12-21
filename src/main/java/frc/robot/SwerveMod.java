@@ -6,18 +6,21 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+//import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 
 public class SwerveMod {
-    double global_rotation;
-    WPI_TalonFX m_speed;
-    WPI_TalonFX m_rotation;
-    WPI_CANCoder rot_encoder;
-    PWMSparkMax sim_speed;
-    PWMSparkMax sim_rotation;
-    AbsoluteSensorRange angle_range;
-    CANCoderConfiguration config;
+//    private double global_rotation;
+    private WPI_TalonFX m_speed;
+    private WPI_TalonFX m_rotation;
+    private WPI_CANCoder rot_encoder;
+//    private PWMSparkMax sim_speed;
+//    private PWMSparkMax sim_rotation;
+//    private AbsoluteSensorRange angle_range;
+    private CANCoderConfiguration config;
+    private StatorCurrentLimitConfiguration DRIVE_CURRENT_LIMIT;
 
     public SwerveMod(WPI_TalonFX speed, WPI_TalonFX rotation, int encoder_port) {
         m_speed = speed;
@@ -29,9 +32,12 @@ public class SwerveMod {
         config.sensorTimeBase = SensorTimeBase.PerSecond;
         config.absoluteSensorRange = AbsoluteSensorRange.Signed_PlusMinus180;
         rot_encoder.configAllSettings(config);
+
+        DRIVE_CURRENT_LIMIT = new StatorCurrentLimitConfiguration();
         
         m_speed.configFactoryDefault();
         m_speed.setInverted(TalonFXInvertType.CounterClockwise);
+        m_speed.configStatorCurrentLimit(DRIVE_CURRENT_LIMIT);
         m_speed.config_kP(0, 0.044057);
         m_speed.config_kF(0, 0.028998);
 
@@ -40,27 +46,41 @@ public class SwerveMod {
         m_rotation.configRemoteFeedbackFilter(rot_encoder, 0);
         m_rotation.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0);
         m_rotation.setSelectedSensorPosition(rot_encoder.getAbsolutePosition());
-        m_rotation.config_kP(0, 0.4);
-        m_rotation.config_kD(0, 12);
+        m_rotation.config_kP(0, 0.2);
+        m_rotation.config_kD(0, 0.01);
+
+        rot_encoder.configFactoryDefault();
+        rot_encoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
+        rot_encoder.setPositionToAbsolute();
     }
 
-    public SwerveMod(PWMSparkMax speed, PWMSparkMax rotation, int encoder_port) {
+/*    public SwerveMod(PWMSparkMax speed, PWMSparkMax rotation, int encoder_port) {
       sim_speed = speed;
       sim_rotation = rotation;
-    }
+    }*/
 
     public void control(double speed, double rotation) {
-      turntoang(rotation * 180);
+      accturntoang(rotation * 180);
       m_speed.set(speed);
     }
 
     public void accturntoang(double rotationdegrees) {
-      double rotationticks = convert(rotationdegrees);
-      m_rotation.set(ControlMode.Position, rotationticks);
+      double act_position = ((m_rotation.getSelectedSensorPosition()/  4096) * 180) % 180;
+      optimizeAzimuthPath(rotationdegrees, act_position);
+
+      m_rotation.set(ControlMode.Position, ((rotationdegrees + (act_position - (act_position % 180))) / 180) * 4096);
+    }
+
+    private double optimizeAzimuthPath (double target, double actual) {
+      if (Math.min(Math.min(Math.abs(target - actual), Math.abs((target + 180) - actual)), Math.abs((target - 180) - actual)) == Math.abs((target + 180) - actual))
+        target += 180;
+      if (Math.min(Math.min(Math.abs(target - actual), Math.abs((target + 180) - actual)), Math.abs((target - 180) - actual)) == Math.abs((target - 180) - actual))
+        target -= 180;
+      return target;
     }
 
     public void turntoang(double rotationdegrees) {
-      double r = 0.2;
+      double r = 10;
       double error;
       while(rotationdegrees - r < rot_encoder.getAbsolutePosition() || rotationdegrees + r > rot_encoder.getAbsolutePosition()) {
         error = rotationdegrees - rot_encoder.getAbsolutePosition();
@@ -99,7 +119,7 @@ public class SwerveMod {
       double ticks = degrees * 4096/180;
       return ticks;
     }
-    
+
 /*  
     public void turntime(WPI_TalonFX motor, double speed, double time){
       Timer timer = new Timer();

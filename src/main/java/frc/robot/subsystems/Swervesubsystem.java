@@ -41,12 +41,14 @@ public class Swervesubsystem extends SubsystemBase {
       r_LeftFront.setNeutralMode(NeutralMode.Brake);
       r_LeftBack.setNeutralMode(NeutralMode.Brake);
 
-      //gyro.setYaw(0);
+      gyro = new Pigeon2(0);
+
+      gyro.setYaw(0);
       
-      TopRight = new SwerveMod(RightFront, r_RightFront, 1);
-      TopLeft = new SwerveMod(LeftFront, r_LeftFront, 2);
-      BottomRight = new SwerveMod(RightBack, r_RightBack, 3);
-      BottomLeft = new SwerveMod(LeftBack, r_LeftBack, 4);      
+      TopRight = new SwerveMod(RightFront, r_RightFront, 6);
+      TopLeft = new SwerveMod(LeftFront, r_LeftFront, 5);
+      BottomRight = new SwerveMod(RightBack, r_RightBack, 8);
+      BottomLeft = new SwerveMod(LeftBack, r_LeftBack, 7);      
   }
 
   public void swerve_mode(double x_speed, double y_speed, double orientation) {
@@ -56,10 +58,12 @@ public class Swervesubsystem extends SubsystemBase {
       BottomRight.control(-orientation, 45);
       BottomLeft.control(orientation, 45);
     }
-    else {
+    else {    
       double u_magnitude = Math.sqrt(Math.pow(x_speed, 2) + Math.pow(y_speed, 2));
       double u_lmagnitude = u_magnitude - 0.75 * u_magnitude * orientation;
       double joystick_rotation = Math.atan2(x_speed, y_speed);
+
+
       Rotation2d RU = new Rotation2d(u_magnitude, 0);
       Rotation2d RD = new Rotation2d(u_magnitude, 0);
       Rotation2d LU = new Rotation2d(u_magnitude, 0);
@@ -82,6 +86,10 @@ public class Swervesubsystem extends SubsystemBase {
       LU.rotateBy(robotori);
       LD.rotateBy(robotori);
 */
+    System.out.println(RU.getDegrees());
+    System.out.println(RD.getDegrees());
+    System.out.println(LU.getDegrees());
+    System.out.println(LD.getDegrees());
     if(orientation > 0){
       TopRight.control(u_magnitude, RU.getDegrees());
       TopLeft.control(u_magnitude, LU.getDegrees());
@@ -98,10 +106,10 @@ public class Swervesubsystem extends SubsystemBase {
   }
 
   public void stop() {
-    TopRight.control(-45, 0);
-    TopLeft.control(45, 0);
-    BottomRight.control(45, 0);
-    BottomLeft.control(-45, 0);
+    TopRight.control(0, -45);
+    TopLeft.control(0, 45);
+    BottomRight.control(0, 45);
+    BottomLeft.control(0, -45);
   }
 
   @Override
