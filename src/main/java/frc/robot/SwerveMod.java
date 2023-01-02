@@ -65,8 +65,8 @@ public class SwerveMod {
     }
 
     public void accturntoang(double rotationdegrees) {
-      double error = m_rotation.getSelectedSensorPosition() - convert(rotationdegrees);
-      double other_error = convert(rotationdegrees) - m_rotation.getSelectedSensorPosition();
+//      double error = m_rotation.getSelectedSensorPosition() - convert(rotationdegrees);
+//      double other_error = convert(rotationdegrees) - m_rotation.getSelectedSensorPosition();
       /*if(Math.abs(error) > 2048){
         m_rotation.set(-pid.calculate(m_rotation.getSelectedSensorPosition(), m_rotation.getSelectedSensorPosition() - other_error));
       }
