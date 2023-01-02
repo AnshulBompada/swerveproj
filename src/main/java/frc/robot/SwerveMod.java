@@ -77,6 +77,27 @@ public class SwerveMod {
       m_rotation.set(ControlMode.Position, convert(rotationdegrees));
     }
 
+    public double convert(double degrees) {
+      double ticks = degrees * 4096/180;
+      return ticks;
+    }
+
+    public double getwheeldegs() {
+        return convert(m_rotation.getSelectedSensorPosition());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
     public void turntoang(double rotationdegrees) {
       double r = 10;
       double error;
@@ -113,12 +134,9 @@ public class SwerveMod {
       return (2/Math.PI) * Math.atan(Math.toRadians(degrees));
     }
 
-    public double convert(double degrees) {
-      double ticks = degrees * 4096/180;
-      return ticks;
-    }
 
-/*  
+
+  
     public void turntime(WPI_TalonFX motor, double speed, double time){
       Timer timer = new Timer();
       timer.start();

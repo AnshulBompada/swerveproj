@@ -87,6 +87,11 @@ public class Swervesubsystem extends SubsystemBase {
       LU.rotateBy(robotori);
       LD.rotateBy(robotori);
 */
+
+    SmartDashboard.putNumber("Top left wheel degrees", TopLeft.getwheeldegs());
+    SmartDashboard.putNumber("Bottom Left wheel degrees", BottomLeft.getwheeldegs());
+    SmartDashboard.putNumber("Top Right wheel degrees", TopRight.getwheeldegs());
+    SmartDashboard.putNumber("Bottom Right wheel degrees", BottomRight.getwheeldegs());
     SmartDashboard.putNumber("RU_Degrees", RU.getDegrees());
     SmartDashboard.putNumber("RD_Degrees", RD.getDegrees());
     SmartDashboard.putNumber("LU_Degrees", LU.getDegrees());

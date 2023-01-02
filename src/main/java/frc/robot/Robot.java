@@ -22,9 +22,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {}
 
   @Override
-  public void autonomousInit() {
-    m_robotContainer.noerrors();
-  }
+  public void autonomousInit() {}
 
   @Override
   public void autonomousPeriodic() {}
