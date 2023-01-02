@@ -5,21 +5,20 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.SensorTimeBase;
-//import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 
 public class SwerveMod {
-//    private double global_rotation;
     private WPI_TalonFX m_speed;
     private WPI_TalonFX m_rotation;
     private WPI_CANCoder rot_encoder;
-//    private PWMSparkMax sim_speed;
-//    private PWMSparkMax sim_rotation;
-//    private AbsoluteSensorRange angle_range;
     private CANCoderConfiguration config;
+    private PIDController pid;
     private StatorCurrentLimitConfiguration DRIVE_CURRENT_LIMIT;
 
     public SwerveMod(WPI_TalonFX speed, WPI_TalonFX rotation, int encoder_port) {
@@ -41,6 +40,11 @@ public class SwerveMod {
         m_speed.config_kP(0, 0.044057);
         m_speed.config_kF(0, 0.028998);
 
+        rot_encoder.configFactoryDefault();
+        rot_encoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
+        rot_encoder.setPositionToAbsolute();
+        rot_encoder.configAbsoluteSensorRange(AbsoluteSensorRange.Signed_PlusMinus180);
+
         m_rotation.configFactoryDefault();
         m_rotation.setInverted(TalonFXInvertType.CounterClockwise);
         m_rotation.configRemoteFeedbackFilter(rot_encoder, 0);
@@ -49,34 +53,28 @@ public class SwerveMod {
         m_rotation.config_kP(0, 0.2);
         m_rotation.config_kD(0, 0.01);
 
-        rot_encoder.configFactoryDefault();
-        rot_encoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
-        rot_encoder.setPositionToAbsolute();
+        SmartDashboard.putNumber("Wheel degrees", m_rotation.getSelectedSensorPosition());
+
+        pid = new PIDController(0.2, 0, 0.01);
     }
 
-/*    public SwerveMod(PWMSparkMax speed, PWMSparkMax rotation, int encoder_port) {
-      sim_speed = speed;
-      sim_rotation = rotation;
-    }*/
-
     public void control(double speed, double rotation) {
+      SmartDashboard.updateValues();
       accturntoang(rotation * 180);
       m_speed.set(speed);
     }
 
     public void accturntoang(double rotationdegrees) {
-      double act_position = ((m_rotation.getSelectedSensorPosition()/  4096) * 180) % 180;
-      optimizeAzimuthPath(rotationdegrees, act_position);
+      double error = m_rotation.getSelectedSensorPosition() - convert(rotationdegrees);
+      double other_error = convert(rotationdegrees) - m_rotation.getSelectedSensorPosition();
+      /*if(Math.abs(error) > 2048){
+        m_rotation.set(-pid.calculate(m_rotation.getSelectedSensorPosition(), m_rotation.getSelectedSensorPosition() - other_error));
+      }
+      if(Math.abs(error) < 2048){
+        m_rotation.set(pid.calculate(m_rotation.getSelectedSensorPosition(), convert(rotationdegrees)));
+      }*/
 
-      m_rotation.set(ControlMode.Position, ((rotationdegrees + (act_position - (act_position % 180))) / 180) * 4096);
-    }
-
-    private double optimizeAzimuthPath (double target, double actual) {
-      if (Math.min(Math.min(Math.abs(target - actual), Math.abs((target + 180) - actual)), Math.abs((target - 180) - actual)) == Math.abs((target + 180) - actual))
-        target += 180;
-      if (Math.min(Math.min(Math.abs(target - actual), Math.abs((target + 180) - actual)), Math.abs((target - 180) - actual)) == Math.abs((target - 180) - actual))
-        target -= 180;
-      return target;
+      m_rotation.set(ControlMode.Position, convert(rotationdegrees));
     }
 
     public void turntoang(double rotationdegrees) {

@@ -6,6 +6,7 @@ import java.lang.Math;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveMod;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Swervesubsystem extends SubsystemBase {
   private WPI_TalonFX RightFront;
@@ -64,32 +65,35 @@ public class Swervesubsystem extends SubsystemBase {
       double joystick_rotation = Math.atan2(x_speed, y_speed);
 
 
-      Rotation2d RU = new Rotation2d(u_magnitude, 0);
-      Rotation2d RD = new Rotation2d(u_magnitude, 0);
-      Rotation2d LU = new Rotation2d(u_magnitude, 0);
-      Rotation2d LD = new Rotation2d(u_magnitude, 0);
+      Rotation2d RU = new Rotation2d(0);
+      Rotation2d RD = new Rotation2d(0);
+      Rotation2d LU = new Rotation2d(0);
+      Rotation2d LD = new Rotation2d(0);
       Rotation2d rotation = new Rotation2d(Math.PI * joystick_rotation);
-      Rotation2d robotori = new Rotation2d(-gyro.getYaw());
+//      Rotation2d robotori = new Rotation2d(-gyro.getYaw());
 
-      RU.rotateBy(new Rotation2d(-orientation*(Math.PI/4)));
-      RD.rotateBy(new Rotation2d(-orientation*(Math.PI/4)));
-      LU.rotateBy(new Rotation2d(orientation*(Math.PI/4)));
-      LD.rotateBy(new Rotation2d(orientation*(Math.PI/4)));
+      RU = RU.rotateBy(new Rotation2d(-orientation*(Math.PI/4)));
+      RD = RD.rotateBy(new Rotation2d(-orientation*(Math.PI/4)));
+      LU = LU.rotateBy(new Rotation2d(orientation*(Math.PI/4)));
+      LD = LD.rotateBy(new Rotation2d(orientation*(Math.PI/4)));
 
-      RU.rotateBy(rotation);
-      RD.rotateBy(rotation);
-      LU.rotateBy(rotation);
-      LD.rotateBy(rotation);
+      RU = RU.rotateBy(rotation);
+      RD = RD.rotateBy(rotation);
+      LU = LU.rotateBy(rotation);
+      LD = LD.rotateBy(rotation);
 /*
       RU.rotateBy(robotori);
       RD.rotateBy(robotori);
       LU.rotateBy(robotori);
       LD.rotateBy(robotori);
 */
-    System.out.println(RU.getDegrees());
-    System.out.println(RD.getDegrees());
-    System.out.println(LU.getDegrees());
-    System.out.println(LD.getDegrees());
+    SmartDashboard.putNumber("RU_Degrees", RU.getDegrees());
+    SmartDashboard.putNumber("RD_Degrees", RD.getDegrees());
+    SmartDashboard.putNumber("LU_Degrees", LU.getDegrees());
+    SmartDashboard.putNumber("LD_Degrees", LD.getDegrees());
+    SmartDashboard.putNumber("hi magn", u_magnitude);
+    SmartDashboard.putNumber("lo magn", u_lmagnitude);
+
     if(orientation > 0){
       TopRight.control(u_magnitude, RU.getDegrees());
       TopLeft.control(u_magnitude, LU.getDegrees());
