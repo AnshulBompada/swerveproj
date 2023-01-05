@@ -99,17 +99,22 @@ public class Swervesubsystem extends SubsystemBase {
     SmartDashboard.putNumber("hi magn", u_magnitude);
     SmartDashboard.putNumber("lo magn", u_lmagnitude);
 
+    double TR_deg = optimizeAzimuthPath(RU.getDegrees(), TopRight.getwheeldegs());
+    double TL_deg = optimizeAzimuthPath(LU.getDegrees(), TopLeft.getwheeldegs());
+    double DR_deg = optimizeAzimuthPath(RD.getDegrees(), BottomRight.getwheeldegs());
+    double DL_deg = optimizeAzimuthPath(LD.getDegrees(), BottomLeft.getwheeldegs());
+
     if(orientation > 0){
-      TopRight.control(u_magnitude, RU.getDegrees());
-      TopLeft.control(u_magnitude, LU.getDegrees());
-      BottomRight.control(u_lmagnitude, RD.getDegrees());
-      BottomLeft.control(u_lmagnitude, LD.getDegrees());
+      TopRight.control(u_magnitude, TR_deg);
+      TopLeft.control(u_magnitude, TL_deg);
+      BottomRight.control(u_lmagnitude, DR_deg);
+      BottomLeft.control(u_lmagnitude, DL_deg);
       }
     if(orientation < 0){
-        TopRight.control(u_lmagnitude, RU.getDegrees());
-        TopLeft.control(u_lmagnitude, LU.getDegrees());
-        BottomRight.control(u_magnitude, RD.getDegrees());
-        BottomLeft.control(u_magnitude, LD.getDegrees());
+        TopRight.control(u_lmagnitude, TR_deg);
+        TopLeft.control(u_lmagnitude, TL_deg);
+        BottomRight.control(u_magnitude, DR_deg);
+        BottomLeft.control(u_magnitude, DL_deg);
       }
     }
   }
@@ -119,6 +124,14 @@ public class Swervesubsystem extends SubsystemBase {
     TopLeft.control(0, 45);
     BottomRight.control(0, 45);
     BottomLeft.control(0, -45);
+  }
+
+  private double optimizeAzimuthPath (double target, double actual) {
+    if (Math.min(Math.min(Math.abs(target - TopLeft.getwheeldegs()), Math.abs((target + 360) - actual)), Math.abs((target - 360) - actual)) == Math.abs((target + 360) - actual))
+      target += 360;
+    if (Math.min(Math.min(Math.abs(target - TopLeft.getwheeldegs()), Math.abs((target + 360) - actual)), Math.abs((target - 360) - actual)) == Math.abs((target - 360) - actual))
+      target -= 360;
+    return target;
   }
 
   @Override

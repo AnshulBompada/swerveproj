@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
-import edu.wpi.first.math.controller.PIDController;
+//import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.sensors.CANCoderConfiguration;
@@ -18,7 +18,7 @@ public class SwerveMod {
     private WPI_TalonFX m_rotation;
     private WPI_CANCoder rot_encoder;
     private CANCoderConfiguration config;
-    private PIDController pid;
+//    private PIDController pid;
     private StatorCurrentLimitConfiguration DRIVE_CURRENT_LIMIT;
 
     public SwerveMod(WPI_TalonFX speed, WPI_TalonFX rotation, int encoder_port) {
@@ -55,11 +55,10 @@ public class SwerveMod {
 
         SmartDashboard.putNumber("Wheel degrees", m_rotation.getSelectedSensorPosition());
 
-        pid = new PIDController(0.2, 0, 0.01);
+//        pid = new PIDController(0.2, 0, 0.01);
     }
 
     public void control(double speed, double rotation) {
-      SmartDashboard.updateValues();
       accturntoang(rotation * 180);
       m_speed.set(speed);
     }
@@ -74,7 +73,7 @@ public class SwerveMod {
         m_rotation.set(pid.calculate(m_rotation.getSelectedSensorPosition(), convert(rotationdegrees)));
       }*/
 
-      m_rotation.set(ControlMode.Position, convert(rotationdegrees));
+      m_rotation.set(ControlMode.Position, rotationdegrees);
     }
 
     public double convert(double degrees) {
@@ -83,7 +82,7 @@ public class SwerveMod {
     }
 
     public double getwheeldegs() {
-        return convert(m_rotation.getSelectedSensorPosition());
+        return m_rotation.getSelectedSensorPosition();
     }
 
 
